@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="application-name" content="BlockData"/>
+    <link rel="icon" type="image/png" href="images/lisk.png">
+
+    <title>BlockData v0.1</title>
+
+    <link href="css/bootstrap.css" rel="stylesheet">
+    <link href="css/amcharts.css" rel="stylesheet">
+    <script src="js/jquery.js"></script>
+</head>
+<body>
+
+<nav class="navbar navbar-default">
+  <div class="container">
+    <!-- Brand and toggle get grouped for better mobile display -->
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1" aria-expanded="false">
+        <span class="sr-only">Toggle navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand navbar-brand-1" href="#">Block</a><a class="navbar-brand navbar-brand-2" href="#">Data</a>
+    </div>
+
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav navbar-right">
+        <form class="navbar-form navbar-left" name="accountForm">
+          <div class="form-group">
+            <input type="password" id="passphrase"  class="form-control" placeholder="Your Passphrase">
+          </div>
+          <button type="button" id="loginButton" class="btn btn-default"><span id="accountAddress">Login</span></button>
+          <div id="logout"></div>
+        </form>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+  
+<div class="container">
+  <div class="row">
+    <div class="col-xs-12 box text-center">
+      <div class="row">
+        <div class="col-xs-12 boxHeader">
+          <p class="boxDescription">Temperature</p>
+        </div>
+      </div>
+      <div id="temperature"></div>
+    </div>
+    <div class="col-xs-12 col-sm-7 col-md-6 box text-center">
+      <div class="row">
+        <div class="col-xs-12 boxHeader">
+          <p class="boxDescription">Power Costs</p>
+        </div>
+      </div>
+      <div id="power"></div>
+    </div>
+    <div class="col-xs-12 col-sm-5 col-md-4 box text-center">
+      <div class="row">
+        <div class="col-xs-12 boxHeader">
+          <p class="boxDescription">Gas Pressure</p>
+        </div>
+      </div>
+      <div id="gas"></div>
+    </div>
+    <div class="hidden-xs hidden-sm col-md-2 box text-center notFinished" id="notFinished" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
+      <div class="row">
+        <div class="col-xs-12 boxHeader">
+          <p class="boxDescription">Device Info</p>
+        </div>
+      </div>
+      <div id="device"></div>
+      <p class="notFinishedText">Coming Soon</p>
+    </div>
+    <div class="hidden-xs hidden-sm col-md-2 box text-center copyright">
+      <p>Dapp by Max Kordek</p>
+      <p><a href="https://www.amcharts.com">All Charts by amCharts</a></p>
+    </div>
+  </div>
+</div>
+
+<nav class="navbar navbar-default navbar-fixed-bottom">
+  <div class="container">
+    <!-- Collect the nav links, forms, and other content for toggling -->
+    <div class="collapse navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="https://lisk.io/">Powered by <img height="16" src="images/lisk.png"></a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li><a href="http://nextthing.co">Running on a &nbsp;<img height="16" src="images/chip.svg"></a></li>
+      </ul>
+    </div><!-- /.navbar-collapse -->
+  </div><!-- /.container-fluid -->
+</nav>
+
+<script type="text/javascript">
+  var url = window.location.href;
+  var parts = url.split('/');
+  var dappId = parts[parts.indexOf('dapps') + 1];
+  var client ="https://login.lisk.io/";
+  var accountId = "";
+
+  $("#loginButton").click(function () {
+    jQuery.ajax({
+      type: 'POST',
+      url: 'https://login.lisk.io/api/accounts/open',
+      dataType: 'json',
+      data: { "secret": document.accountForm.passphrase.value }
+      }).done(function (data) {
+        accountId = data.account.address;
+        document.getElementById("passphrase").outerHTML = "";
+        document.getElementById("accountAddress").innerHTML =  accountId;
+        document.getElementById("logout").outerHTML = "<button type='button' class='btn btn-default' onClick='window.location.href=window.location.href'>Logout</button>";
+      });
+    });
+
+
+    jQuery.get("/api/dapps/" + dappId + "/api/entries/devices?accountId=" + recipient, function (data) {
+      if (data.error == "DAPPS.DAPPS_NOT_READY") {
+        alert("Dapp offline! The master node which computes your instance of this dapp is offline. Please reload the window!");
+      }
+
+      jQuery.each(data.response.entries, function (key, value) {
+        $("#devices").prepend("<label class='col-xs-2 radio-inline text-center'><input type='radio' name='" + value.asset.device + "' id='" + value.asset.device + "' value='" + key + "'> <img src='images/" + value.asset.device + ".png'> <br><br><strong>" + value.asset.name + "</strong></label>");
+      });
+    });
+</script>
+
+<!-- JavaScript files -->
+<script src="js/amcharts.js"></script>
+<script src="js/serial.js"></script>
+<script src="js/gauge.js"></script>
+<script src="js/dark.js"></script>
+<script src="js/temperature.js"></script>    
+<script src="js/power.js"></script>    
+<script src="js/gas.js"></script>    
+<script src="js/device.js"></script>    
+<script src="js/general.js"></script>
+<script src="js/bootstrap.js"></script>
+<script src="js/jquery.js"></script>
+</body>
+</html>
