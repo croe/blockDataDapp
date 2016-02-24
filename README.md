@@ -6,6 +6,8 @@
 4.) ???  
 5.) WIN!  
 
+![](screenshot.png "")
+
 ### Support  
   
 If you encounter any problems using this dapp, please head over to https://lisk.chat/ and ask for @max!  
