@@ -12,9 +12,9 @@ BlockData.prototype.create = function (data, trs) {
 	trs.asset = {
 		deviceId: new Buffer(data.deviceId, 'utf8').toString('hex'), // Save as hex string
 		deviceName: new Buffer(data.deviceName, 'utf8').toString('hex'), 
-		tempIn: new Buffer(data.tempIn, 'utf8').toString('hex'), 
-		powerCosts: new Buffer(data.powerCosts, 'utf8').toString('hex'), 
-		gasCosts: new Buffer(data.gasCosts, 'utf8').toString('hex')
+		temperature: new Buffer(data.temperature, 'utf8').toString('hex'), 
+		power: new Buffer(data.power, 'utf8').toString('hex'), 
+		gas: new Buffer(data.gas, 'utf8').toString('hex')
 	};
 
 	return trs;
@@ -25,7 +25,7 @@ BlockData.prototype.calculateFee = function (trs) {
 }
 
 BlockData.prototype.verify = function (trs, sender, cb, scope) {
-	/*if (trs.asset.tempIn.length > 40) {
+	/*if (trs.asset.temperature.length > 40) {
 		return setImmediate(cb, "Max length of an device id is 20 characters!");
 	}
 	if (trs.asset.deviceName.length > 100) {
@@ -36,7 +36,7 @@ BlockData.prototype.verify = function (trs, sender, cb, scope) {
 }
 
 BlockData.prototype.getBytes = function (trs) {
-	var b = Buffer.concat([new Buffer(trs.asset.deviceId, 'hex'), new Buffer(trs.asset.deviceName, 'hex'), new Buffer(trs.asset.tempIn, 'hex'), new Buffer(trs.asset.powerCosts, 'hex'), new Buffer(trs.asset.gasCosts, 'hex')]);
+	var b = Buffer.concat([new Buffer(trs.asset.deviceId, 'hex'), new Buffer(trs.asset.deviceName, 'hex'), new Buffer(trs.asset.temperature, 'hex'), new Buffer(trs.asset.power, 'hex'), new Buffer(trs.asset.gas, 'hex')]);
 
 	return b;
 }
@@ -84,23 +84,23 @@ BlockData.prototype.save = function (trs, cb) {
 			transactionId: trs.id,
 			deviceId: trs.asset.deviceId,
 			deviceName: trs.asset.deviceName,
-			tempIn: trs.asset.tempIn,
-			powerCosts: trs.asset.powerCosts,
-			gasCosts: trs.asset.gasCosts,
+			temperature: trs.asset.temperature,
+			power: trs.asset.power,
+			gas: trs.asset.gas,
 		}
 	}, cb);
 }
 
 BlockData.prototype.dbRead = function (row) {
-	if (!row.hm_transactionId) {
+	if (!row.bd_transactionId) {
 		return null;
 	} else {
 		return {
-			deviceId: row.hm_deviceId,
-			deviceName: row.hm_deviceName,
-			tempIn: row.hm_tempIn,
-			powerCosts: row.hm_powerCosts,
-			gasCosts: row.hm_gasCosts
+			deviceId: row.bd_deviceId,
+			deviceName: row.bd_deviceName,
+			temperature: row.bd_temperature,
+			power: row.bd_power,
+			gas: row.bd_gas
 		};
 	}
 }
@@ -109,33 +109,33 @@ BlockData.prototype.normalize = function (asset, cb) {
 	library.validator.validate(asset, {
 		type: "object", // It is an object
 		properties: {
-			deviceId: { // It contains a tempIn property
+			deviceId: { // It contains a temperature property
 				type: "string", // It is a string
 				format: "hex", // It is in a hexadecimal format
 				minLength: 1 // Minimum length of string is 1 character
 			},
-			deviceName: { // It contains a tempIn property
+			deviceName: { // It contains a temperature property
 				type: "string", // It is a string
 				format: "hex", // It is in a hexadecimal format
 				minLength: 1 // Minimum length of string is 1 character
 			},
-			tempIn: { // It contains a deviceName property
+			temperature: { // It contains a deviceName property
 				type: "string", // It is a string
 				format: "hex", // It is in a hexadecimal format
 				minLength: 1 // Minimum length of string is 1 character
 			},
-			powerCosts: { // It contains a deviceName property
+			power: { // It contains a deviceName property
 				type: "string", // It is a string
 				format: "hex", // It is in a hexadecimal format
 				minLength: 1 // Minimum length of string is 1 character
 			},
-			gasCosts: { // It contains a deviceName property
+			gas: { // It contains a deviceName property
 				type: "string", // It is a string
 				format: "hex", // It is in a hexadecimal format
 				minLength: 1 // Minimum length of string is 1 character
 			},
 		},
-		required: ["deviceId", "deviceName", "tempIn", "tempOut", "humidIn", "humidOut", "powerCosts", "gasCosts"]
+		required: ["deviceId", "deviceName", "temperature", "tempOut", "humidIn", "humidOut", "power", "gas"]
 	}, cb);
 }
 
@@ -163,17 +163,17 @@ BlockData.prototype.putValues = function (cb, query) {
 					minLength: 1,
 					maxLength: 42
 				},
-				tempIn: {
+				temperature: {
 					type: "string",
 					minLength: 1,
 					maxLength: 42
 				},
-				powerCosts: {
+				power: {
 					type: "string",
 					minLength: 1,
 					maxLength: 42
 				},
-				gasCosts: {
+				gas: {
 					type: "string",
 					minLength: 1,
 					maxLength: 42
@@ -201,9 +201,9 @@ BlockData.prototype.putValues = function (cb, query) {
 					type: self.type,
 					deviceId: query.deviceId,
 					deviceName: query.deviceName,
-					tempIn: query.tempIn,
-					powerCosts: query.powerCosts,
-					gasCosts: query.gasCosts,
+					temperature: query.temperature,
+					power: query.power,
+					gas: query.gas,
 					sender: account,
 					keypair: keypair
 				});
@@ -246,10 +246,10 @@ BlockData.prototype.getValues = function (cb, query) {
             join: [{
                 type: 'left outer',
                 table: 'asset_values',
-                alias: "hm",
-                on: {"t.id": "hm.transactionId"}
+                alias: "bd",
+                on: {"t.id": "bd.transactionId"}
             }] // The fields have to be in the same order as in the blockchain.json
-        }, ['id', 'type', 'senderId', 'senderPublicKey', 'recipientId', 'amount', 'fee', 'signature', 'blockId', 'transactionId', 'deviceId', 'deviceName', 'tempIn', 'powerCosts', 'gasCosts'], function (err, transactions) {
+        }, ['id', 'type', 'senderId', 'senderPublicKey', 'recipientId', 'amount', 'fee', 'signature', 'blockId', 'transactionId', 'deviceId', 'deviceName', 'temperature', 'power', 'gas'], function (err, transactions) {
             if (err) {
                 return cb(err.toString());
             }
@@ -259,16 +259,16 @@ BlockData.prototype.getValues = function (cb, query) {
                 tx.asset = {
                 	deviceId: new Buffer(tx.deviceId, 'hex').toString('utf8'),
                     deviceName: new Buffer(tx.deviceName, 'hex').toString('utf8'),
-                    tempIn: new Buffer(tx.tempIn, 'hex').toString('utf8'),
-                    powerCosts: new Buffer(tx.powerCosts, 'hex').toString('utf8'),
-                    gasCosts: new Buffer(tx.gasCosts, 'hex').toString('utf8')
+                    temperature: new Buffer(tx.temperature, 'hex').toString('utf8'),
+                    power: new Buffer(tx.power, 'hex').toString('utf8'),
+                    gas: new Buffer(tx.gas, 'hex').toString('utf8')
                 };
 
                 delete tx.deviceId;
                 delete tx.deviceName;
-                delete tx.tempIn;
-                delete tx.powerCosts;
-                delete tx.gasCosts;
+                delete tx.temperature;
+                delete tx.power;
+                delete tx.gas;
                 return tx;
             });
 

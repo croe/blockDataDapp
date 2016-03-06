@@ -67,11 +67,11 @@
 	{
 		  "path": "/put/values",
 		  "method": "put",
-		  "handler": "contracts.HomeMonitor.putValues"
+		  "handler": "contracts.BlockData.putValues"
 	},
 	{
 		   "path": "/get/values",
 		   "method": "get",
-		   "handler" : "contracts.HomeMonitor.getValues"
+		   "handler" : "contracts.BlockData.getValues"
 	}
 ]

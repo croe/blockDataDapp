@@ -4,88 +4,7 @@ var chart = AmCharts.makeChart("temperature", {
     "startDuration": 0,
     "marginTop":0,
     "marginRight": 15,
-    "dataProvider": [{
-        "year": "1979",
-        "value": 0.05
-    }, {
-        "year": "1980",
-        "value": 0.077
-    }, {
-        "year": "1981",
-        "value": 0.12
-    }, {
-        "year": "1982",
-        "value": 0.011
-    }, {
-        "year": "1983",
-        "value": 0.177
-    }, {
-        "year": "1984",
-        "value": -0.021
-    }, {
-        "year": "1985",
-        "value": -0.037
-    }, {
-        "year": "1986",
-        "value": 0.03
-    }, {
-        "year": "1987",
-        "value": 0.179
-    }, {
-        "year": "1988",
-        "value": 0.18
-    }, {
-        "year": "1989",
-        "value": 0.104
-    }, {
-        "year": "1990",
-        "value": 0.255
-    }, {
-        "year": "1991",
-        "value": 0.21
-    }, {
-        "year": "1992",
-        "value": 0.065
-    }, {
-        "year": "1993",
-        "value": 0.11
-    }, {
-        "year": "1994",
-        "value": 0.172
-    }, {
-        "year": "1995",
-        "value": 0.269
-    }, {
-        "year": "1996",
-        "value": 0.141
-    }, {
-        "year": "1997",
-        "value": 0.353
-    }, {
-        "year": "1998",
-        "value": 0.548
-    }, {
-        "year": "1999",
-        "value": 0.298
-    }, {
-        "year": "2000",
-        "value": 0.267
-    }, {
-        "year": "2001",
-        "value": 0.411
-    }, {
-        "year": "2002",
-        "value": 0.462
-    }, {
-        "year": "2003",
-        "value": 0.47
-    }, {
-        "year": "2004",
-        "value": 0.445
-    }, {
-        "year": "2005",
-        "value": 0.47
-    }],
+    "dataProvider": [],
     "valueAxes": [{
         "axisAlpha": 0,
         "position": "left"
@@ -125,10 +44,10 @@ var chart = AmCharts.makeChart("temperature", {
         "valueLineAlpha":0.5,
         "fullWidth":true
     },
-    "dataDateFormat": "YYYY",
-    "categoryField": "year",
+    "dataDateFormat": "DD-MM-YYYY",
+    "categoryField": "time",
     "categoryAxis": {
-        "minPeriod": "YYYY",
+        "minPeriod": "DD",
         "parseDates": true,
         "minorGridAlpha": 0.1,
         "minorGridEnabled": true
@@ -137,6 +56,24 @@ var chart = AmCharts.makeChart("temperature", {
         "enabled": true
     }
 });
+
+jQuery.get(client + "api/dapps/" + dappId + "/api/get/values?accountId=" + accountId, function (data) {
+  if (data.error == "DAPPS.DAPPS_NOT_READY") {
+    alert("Dapp offline! The master node which computes your instance of this dapp is offline. Please reload the window!");
+  }
+
+temperatureValues = "";
+jQuery.each(data.response.entries, function (key, value) {
+    temperatureValues.append("{time:"+value.asset.time+",value:"+value.asset.temperature+"},");
+  });
+
+chart.dataProvider = "["+temperatureValues+"]";
+chart.validateData();
+});
+
+
+//chart.dataProvider = [{time:"11-03-2016", value: 0},{time:"12-03-2016", value: 10},{time:"13-03-2016", value: 20},]
+//chart.validateData();
 
 chart.addListener("rendered", zoomChart);
 if(chart.zoomChart){
