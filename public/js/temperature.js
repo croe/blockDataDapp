@@ -17,7 +17,7 @@ jQuery.get(client + "api/dapps/" + dappId + "/api/get/values?deviceId=" + device
         }],
         "graphs": [{
             "id":"g1",
-            "balloonText": "[[category]]<br><b><span style='font-size:14px;'>[[value]]</span></b>",
+            "balloonText": "[[category]]<br><b><span style='font-size:14px;'>[[value]]°C</span></b>",
             "bullet": "round",
             "bulletSize": 8,         
             "lineColor": "#d1655d",
@@ -63,21 +63,18 @@ jQuery.get(client + "api/dapps/" + dappId + "/api/get/values?deviceId=" + device
         }
     });
 
-  if (data.error == "DAPPS.DAPPS_NOT_READY") {
-    alert("Dapp offline! The master node which computes your instance of this dapp is offline. Please reload the window!");
-  }
-
   jQuery.each(data.response.homeValues, function (key, value) {
-    chart.dataProvider.push({time: clock, value: value.asset.temperature});
+    chart.dataProvider.push({time: value.asset.clock, value: value.asset.temperature});
   });
   chart.validateData();
-});
 
-chart.addListener("rendered", zoomChart);
-if(chart.zoomChart){
-    chart.zoomChart();
-}
+  chart.addListener("rendered", zoomChart);
+    if(chart.zoomChart){
+        chart.zoomChart();
+    }
 
-function zoomChart(){
+  function zoomChart(){
     chart.zoomToIndexes(Math.round(chart.dataProvider.length * 0.4), Math.round(chart.dataProvider.length * 0.55));
-}
+  }
+
+};

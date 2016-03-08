@@ -1,6 +1,3 @@
-AmCharts.ready(function() {
-
-    // column chart with different negative colors
     var chart = new AmCharts.AmSerialChart(AmCharts.themes.dark);
     chart.dataProvider = [{
         day: 1,
@@ -59,6 +56,3 @@ AmCharts.ready(function() {
     categoryAxis.gridAlpha = 0;
     categoryAxis.axisAlpha = 0;
     chart.write("device");
-
-
-});
