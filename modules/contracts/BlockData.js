@@ -14,7 +14,8 @@ BlockData.prototype.create = function (data, trs) {
 		deviceName: new Buffer(data.deviceName, 'utf8').toString('hex'), 
 		temperature: new Buffer(data.temperature, 'utf8').toString('hex'), 
 		power: new Buffer(data.power, 'utf8').toString('hex'), 
-		gas: new Buffer(data.gas, 'utf8').toString('hex')
+		gas: new Buffer(data.gas, 'utf8').toString('hex'),
+		clock: new Buffer(data.clock, 'utf8').toString('hex')
 	};
 
 	return trs;
@@ -36,7 +37,7 @@ BlockData.prototype.verify = function (trs, sender, cb, scope) {
 }
 
 BlockData.prototype.getBytes = function (trs) {
-	var b = Buffer.concat([new Buffer(trs.asset.deviceId, 'hex'), new Buffer(trs.asset.deviceName, 'hex'), new Buffer(trs.asset.temperature, 'hex'), new Buffer(trs.asset.power, 'hex'), new Buffer(trs.asset.gas, 'hex')]);
+	var b = Buffer.concat([new Buffer(trs.asset.deviceId, 'hex'), new Buffer(trs.asset.deviceName, 'hex'), new Buffer(trs.asset.temperature, 'hex'), new Buffer(trs.asset.power, 'hex'), new Buffer(trs.asset.gas, 'hex'), new Buffer(trs.asset.clock, 'hex')]);
 
 	return b;
 }
@@ -87,6 +88,7 @@ BlockData.prototype.save = function (trs, cb) {
 			temperature: trs.asset.temperature,
 			power: trs.asset.power,
 			gas: trs.asset.gas,
+			clock: trs.asset.clock
 		}
 	}, cb);
 }
@@ -100,7 +102,8 @@ BlockData.prototype.dbRead = function (row) {
 			deviceName: row.bd_deviceName,
 			temperature: row.bd_temperature,
 			power: row.bd_power,
-			gas: row.bd_gas
+			gas: row.bd_gas,
+			clock: row.bd_clock
 		};
 	}
 }
@@ -134,8 +137,13 @@ BlockData.prototype.normalize = function (asset, cb) {
 				format: "hex", // It is in a hexadecimal format
 				minLength: 1 // Minimum length of string is 1 character
 			},
+			clock: { // It contains a deviceName property
+				type: "string", // It is a string
+				format: "hex", // It is in a hexadecimal format
+				minLength: 1 // Minimum length of string is 1 character
+			}
 		},
-		required: ["deviceId", "deviceName", "temperature", "tempOut", "humidIn", "humidOut", "power", "gas"]
+		required: ["deviceId", "deviceName", "temperature", "power", "gas", "clock"]
 	}, cb);
 }
 
@@ -177,6 +185,11 @@ BlockData.prototype.putValues = function (cb, query) {
 					type: "string",
 					minLength: 1,
 					maxLength: 42
+				},
+				clock: {
+					type: "string",
+					minLength: 1,
+					maxLength: 42
 				}
 		}
 	}, function (err) {
@@ -204,6 +217,7 @@ BlockData.prototype.putValues = function (cb, query) {
 					temperature: query.temperature,
 					power: query.power,
 					gas: query.gas,
+					clock: query.clock,
 					sender: account,
 					keypair: keypair
 				});
@@ -249,7 +263,7 @@ BlockData.prototype.getValues = function (cb, query) {
                 alias: "bd",
                 on: {"t.id": "bd.transactionId"}
             }] // The fields have to be in the same order as in the blockchain.json
-        }, ['id', 'type', 'senderId', 'senderPublicKey', 'recipientId', 'amount', 'fee', 'signature', 'blockId', 'transactionId', 'deviceId', 'deviceName', 'temperature', 'power', 'gas'], function (err, transactions) {
+        }, ['id', 'type', 'senderId', 'senderPublicKey', 'recipientId', 'amount', 'fee', 'signature', 'blockId', 'transactionId', 'deviceId', 'deviceName', 'temperature', 'power', 'gas', 'clock'], function (err, transactions) {
             if (err) {
                 return cb(err.toString());
             }
@@ -261,7 +275,8 @@ BlockData.prototype.getValues = function (cb, query) {
                     deviceName: new Buffer(tx.deviceName, 'hex').toString('utf8'),
                     temperature: new Buffer(tx.temperature, 'hex').toString('utf8'),
                     power: new Buffer(tx.power, 'hex').toString('utf8'),
-                    gas: new Buffer(tx.gas, 'hex').toString('utf8')
+                    gas: new Buffer(tx.gas, 'hex').toString('utf8'),
+                    clock: new Buffer(tx.clock, 'hex').toString('utf8')
                 };
 
                 delete tx.deviceId;
@@ -269,6 +284,7 @@ BlockData.prototype.getValues = function (cb, query) {
                 delete tx.temperature;
                 delete tx.power;
                 delete tx.gas;
+                delete tx.clock;
                 return tx;
             });
 

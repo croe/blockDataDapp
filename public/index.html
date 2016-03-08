@@ -98,9 +98,9 @@
     <script type="text/javascript">
       var url = window.location.href;
       var parts = url.split('/');
-      var dappId = parts[parts.indexOf('dapps') + 1];
-      var client ="https://login.lisk.io/";
-      var accountId = "";
+      var dappId = "17801572182567880835";
+      var client ="http://108.61.170.245:7000/";
+      var deviceId = "";
 
       $("#loginButton").click(function () {
         jQuery.ajax({
@@ -109,15 +109,15 @@
           dataType: 'json',
           data: { "secret": document.accountForm.passphrase.value }
           }).done(function (data) {
-            accountId = data.account.address;
+            deviceId = data.account.address;
             document.getElementById("passphrase").outerHTML = "";
-            document.getElementById("accountAddress").innerHTML =  accountId;
+            document.getElementById("accountAddress").innerHTML =  deviceId;
             document.getElementById("logout").outerHTML = "<button type='button' class='btn btn-default' onClick='window.location.href=window.location.href'>Logout</button>";
           });
         });
 
 
-        /*jQuery.get("/api/dapps/" + dappId + "/api/entries/devices?accountId=" + recipient, function (data) {
+        /*jQuery.get("/api/dapps/" + dappId + "/api/entries/devices?deviceId=" + recipient, function (data) {
           if (data.error == "DAPPS.DAPPS_NOT_READY") {
             alert("Dapp offline! The master node which computes your instance of this dapp is offline. Please reload the window!");
           }
