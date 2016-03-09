@@ -13,7 +13,6 @@
     <link href="css/amcharts.css" rel="stylesheet">
     <script src="js/jquery.js"></script>
     <script src="js/toHex.js"></script>
-    <script src="js/addScript.js"></script>
   </head>
   <body>
     <nav class="navbar navbar-default">
@@ -32,7 +31,7 @@
           <ul class="nav navbar-nav navbar-right">
             <form class="navbar-form navbar-left" name="accountForm">
               <div class="form-group">
-                <input type="password" id="passphrase"  class="form-control" placeholder="Your Passphrase">
+                <input type="password" id="passphrase" class="form-control" placeholder="Your Passphrase" autofocus>
               </div>
               <button type="button" id="loginButton" class="btn btn-default"><span id="accountAddress">Login</span></button>
               <div id="logout"></div>
@@ -102,13 +101,26 @@
       var parts = url.split('/');
       var dappId = "17801572182567880835";
       var client ="http://108.61.170.245:7000/";
-      var deviceId = "";
+      var deviceId;
 
-      jQuery.get(client + "/api/dapps/" + dappId + "/api/get/values?deviceId=" + deviceId, function (data) {
+      jQuery.get(client + "api/dapps/" + dappId + "/api/get/values?deviceId=" + deviceId, function (data) {
         if (data.error == "DAPPS.DAPPS_NOT_READY") {
           alert("Dapp offline! The master node which computes your instance of this dapp is offline. Please reload the window!");
         }
       });
+
+      function showData(data) {
+        deviceId = data.account.address;
+        document.getElementById("passphrase").outerHTML = "";
+        document.getElementById("accountAddress").innerHTML =  deviceId;
+        document.getElementById("logout").outerHTML = "<button type='button' class='btn btn-default' onClick='window.location.href=window.location.href'>Logout</button>";
+        
+        deviceId = toHex(deviceId); // Convert to HEX
+        // Show the charts
+        getTemperature();
+        getPower();
+        getGas();
+      }
 
       $("#loginButton").click(function () {
         jQuery.ajax({
@@ -117,14 +129,7 @@
           dataType: 'json',
           data: { "secret": document.accountForm.passphrase.value }
           }).done(function (data) {
-            document.getElementById("data").style.opacity = 1;
-            deviceId = data.account.address;
-            document.getElementById("passphrase").outerHTML = "";
-            document.getElementById("accountAddress").innerHTML =  deviceId;
-            document.getElementById("logout").outerHTML = "<button type='button' class='btn btn-default' onClick='window.location.href=window.location.href'>Logout</button>";
-            addScript('js/temperature.js');
-            addScript('js/power.js');
-            addScript('js/gas.js');
+            showData(data);
           });
         });
     </script>
@@ -136,9 +141,10 @@
     <script src="js/dark.js"></script> 
     <script src="js/general.js"></script>
     <script src="js/bootstrap.js"></script>
-    <!--<script type="text/javascript" src="js/temperature.js"></script>
-    <script type="text/javascript" src="js/power.js"></script>
-    <script type="text/javascript" src="js/gas.js"></script>-->
     <script type="text/javascript" src="js/device.js"></script>
+    <script type="text/javascript" src="js/temperature.js"></script>
+    <script type="text/javascript" src="js/power.js"></script>
+    <script type="text/javascript" src="js/gas.js"></script>
+
   </body>
 </html>
