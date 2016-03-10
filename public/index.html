@@ -120,6 +120,13 @@
         getTemperature();
         getPower();
         getGas();
+
+        setInterval(function () {
+          getTemperature();
+          getPower();
+          getGas();
+        }, 10000);
+
       }
 
       $("#loginButton").click(function () {
