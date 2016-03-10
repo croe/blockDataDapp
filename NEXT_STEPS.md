@@ -1,11 +1,7 @@
-1. JS script which writes dummy data to the blockchain (started with forever) (only put)   
-2. UI API integration (only get)   
-3. UI if not logged in   
+1. finish python script to push random data to the blockchain every second
+
+2. 1 day = 1 second
+
+3. page refreshes every second
 
 
-
-tempIn = temperature
-
-powerCosts = power
-
-gasCosts = gas
