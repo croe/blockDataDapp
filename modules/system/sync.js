@@ -381,7 +381,7 @@ Sync.prototype.onBlockchainLoaded = function () {
 		library.sequence.add(private.blockSync, function (err) {
 			err && library.logger('blockSync timer', err);
 
-			setTimeout(nextBlockSync, 1 * 1000)
+			setTimeout(nextBlockSync, 10 * 1000)
 		});
 	});
 
