@@ -16,11 +16,11 @@ function Sequence(config) {
 		}
 		var task = self.sequence.shift();
 		if (!task) {
-			return setTimeout(nextSequenceTick, 100);
+			return setTimeout(nextSequenceTick, 10);
 		}
 		var args = [function (err, res) {
 			task.done && setImmediate(task.done, err, res);
-			setTimeout(nextSequenceTick, 100);
+			setTimeout(nextSequenceTick, 10);
 		}];
 		if (task.args) {
 			args = args.concat(task.args);
