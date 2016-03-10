@@ -67,14 +67,14 @@
           </div>
           <div id="gas"></div>
         </div>
-        <div class="hidden-xs hidden-sm col-md-2 box text-center notFinished" id="notFinished" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
+        <div class="hidden-xs hidden-sm col-md-2 box text-center" data-toggle="tooltip" data-placement="left" title="Tooltip on left">
           <div class="row">
             <div class="col-xs-12 boxHeader">
               <p class="boxDescription">Device Info</p>
             </div>
           </div>
           <div id="device"></div>
-          <p class="notFinishedText">Coming Soon</p>
+          <p class="deviceName" id="deviceName"></p>
         </div>
         <div class="hidden-xs hidden-sm col-md-2 box text-center copyright">
           <p>Dapp by Max Kordek</p>
@@ -115,16 +115,18 @@
         document.getElementById("accountAddress").innerHTML =  deviceId;
         document.getElementById("logout").outerHTML = "<button type='button' class='btn btn-default' onClick='window.location.href=window.location.href'>Logout</button>";
         
-        deviceId = toHex(deviceId); // Convert to HEX
+        deviceId = toHex(deviceId); // Convert to HEX, for the GET call
         // Show the charts
         getTemperature();
         getPower();
         getGas();
+        getDevice();
 
         setInterval(function () {
           getTemperature();
           getPower();
           getGas();
+          getDevice();
         }, 10000);
 
       }
