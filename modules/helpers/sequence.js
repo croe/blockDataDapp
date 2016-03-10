@@ -4,7 +4,7 @@ var extend = require('extend');
 function Sequence(config) {
 	var _default = {
 		onWarning: null,
-		warningLimit: 1
+		warningLimit: 10
 	}
 	_default = extend(_default, config);
 	var self = this;
@@ -16,11 +16,11 @@ function Sequence(config) {
 		}
 		var task = self.sequence.shift();
 		if (!task) {
-			return setTimeout(nextSequenceTick, 10);
+			return setTimeout(nextSequenceTick, 100);
 		}
 		var args = [function (err, res) {
 			task.done && setImmediate(task.done, err, res);
-			setTimeout(nextSequenceTick, 10);
+			setTimeout(nextSequenceTick, 100);
 		}];
 		if (task.args) {
 			args = args.concat(task.args);
