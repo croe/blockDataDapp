@@ -1,12 +1,8 @@
 ### BlockData
   
-1.) Turn on your C.H.I.P. which measures your room temperature, power costs and gas boiler pressure.  
-2.) Push the data into the blockchain every 10 seconds.   
-3.) Use BlockData to visuallise and view your data everywhere in the world.   
-4.) ???  
-5.) WIN!  
+BlockData collects the temperature, power costs and gas pressure from your smart home and save them inside a Lisk sidechain. This Dapp represents the data in charts.
 
-![](screenshot.png "")
+[![](http://i.imgur.com/sHGLEXQ.png)](https://www.youtube.com/watch?v=t0T_Ko8f39o)
 
 ### Support  
   
